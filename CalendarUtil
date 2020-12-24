@@ -1,7 +1,6 @@
-
 /**
  * Calendar工具类
- *
+ * 舍入模式，默认CEIL格式，eg: 2.5秒在FLOOR模式下为2秒，在CEIL为3秒
  * @describtion 始终保证你的cal2.compareTo(cal1)>=0或者!cal2.before(cal1)才能保证计算结果的正确
  * @author WangFengLong
  * @Date 2020/11/17
@@ -10,12 +9,6 @@ public final class CalendarUtil {
     public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HH:mm:ss";
-
-    /**
-     * betweenMode保留模式，默认CEIL格式，eg: 2.5秒在FLOOR模式下为2秒，在CEIL为3秒
-     */
-    public static final int FLOOR = 0;
-    public static final int CEIL = 1;
 
     private CalendarUtil() {}
     /**
@@ -26,14 +19,14 @@ public final class CalendarUtil {
      * @return
      */
     public static int getBetweenYear(Calendar cal1,Calendar cal2){
-        return getBetweenYear(cal1,cal2,CEIL);
+        return getBetweenYear(cal1,cal2,RoundingMode.CEILING);
     }
 
-    public static int getBetweenYear(Calendar cal1,Calendar cal2,int betweenMode){
+    public static int getBetweenYear(Calendar cal1, Calendar cal2, RoundingMode roundingMode){
         int betweenYear = cal2.get(Calendar.YEAR) - cal1.get(Calendar.YEAR);
         Calendar cloneCal1 = (Calendar)cal1.clone();
         cloneCal1.add(Calendar.YEAR,betweenYear);
-        if(betweenMode == CEIL){
+        if(roundingMode == RoundingMode.CEILING){
             // 如果第一个日期加上对应的年份后小于第二个日期则年份加一
             if(cloneCal1.before(cal2)){
                 betweenYear++;
@@ -56,11 +49,11 @@ public final class CalendarUtil {
      * @return
      */
     public static int getBetweenMonth(Calendar cal1,Calendar cal2){
-        return getBetweenMonth(cal1,cal2,CEIL);
+        return getBetweenMonth(cal1,cal2,RoundingMode.CEILING);
     }
 
-    public static int getBetweenMonth(Calendar cal1,Calendar cal2,int betweenMode){
-        int betweenYear = getBetweenYear(cal1, cal2, FLOOR);
+    public static int getBetweenMonth(Calendar cal1,Calendar cal2,RoundingMode roundingMode){
+        int betweenYear = getBetweenYear(cal1, cal2, RoundingMode.FLOOR);
         int betweenMonth  = betweenYear * 12;
         int month1 = cal1.get(Calendar.MONTH);
         int month2 = cal2.get(Calendar.MONTH);
@@ -72,7 +65,7 @@ public final class CalendarUtil {
         }
         Calendar cloneCal1 = (Calendar)cal1.clone();
         cloneCal1.add (Calendar.MONTH,betweenMonth);
-        if(betweenMode == CEIL){
+        if(roundingMode == RoundingMode.CEILING){
             // 如果第一个日期加上对应的月份后小于第二个日期则月份加一
             if (cloneCal1.before(cal2)){
                 betweenMonth++;
@@ -94,11 +87,11 @@ public final class CalendarUtil {
      * @return
      */
     public static long getBetweenDay(Calendar cal1,Calendar cal2){
-        return getBetweenDay(cal1,cal2,CEIL);
+        return getBetweenDay(cal1,cal2,RoundingMode.CEILING);
     }
 
-    public static long getBetweenDay(Calendar cal1,Calendar cal2,int betweenMode){
-        return betweenModeHandle(cal1,cal2,1000*60*60*24,betweenMode);
+    public static long getBetweenDay(Calendar cal1,Calendar cal2,RoundingMode roundingMode){
+        return betweenModeHandle(cal1,cal2,1000*60*60*24,roundingMode);
     }
 
     /**
@@ -109,11 +102,11 @@ public final class CalendarUtil {
      * @return
      */
     public static long getBetweenHour(Calendar cal1,Calendar cal2){
-        return getBetweenHour(cal1,cal2,CEIL);
+        return getBetweenHour(cal1,cal2,RoundingMode.CEILING);
     }
 
-    public static long getBetweenHour(Calendar cal1,Calendar cal2,int betweenMode){
-        return betweenModeHandle(cal1,cal2,1000*60*60,betweenMode);
+    public static long getBetweenHour(Calendar cal1,Calendar cal2,RoundingMode roundingMode){
+        return betweenModeHandle(cal1,cal2,1000*60*60,roundingMode);
     }
 
     /**
@@ -124,11 +117,11 @@ public final class CalendarUtil {
      * @return
      */
     public static long getBetweenMinute(Calendar cal1,Calendar cal2){
-        return getBetweenMinute(cal1,cal2,CEIL);
+        return getBetweenMinute(cal1,cal2,RoundingMode.CEILING);
     }
 
-    public static long getBetweenMinute(Calendar cal1,Calendar cal2,int betweenMode){
-        return betweenModeHandle(cal1,cal2,1000*60,betweenMode);
+    public static long getBetweenMinute(Calendar cal1,Calendar cal2,RoundingMode roundingMode){
+        return betweenModeHandle(cal1,cal2,1000*60,roundingMode);
     }
 
     /**
@@ -139,11 +132,11 @@ public final class CalendarUtil {
      * @return
      */
     public static long getBetweenSecond(Calendar cal1,Calendar cal2){
-        return getBetweenSecond(cal1,cal2,CEIL);
+        return getBetweenSecond(cal1,cal2,RoundingMode.CEILING);
     }
 
-    public static long getBetweenSecond(Calendar cal1,Calendar cal2,int betweenMode){
-        return betweenModeHandle(cal1,cal2,1000,betweenMode);
+    public static long getBetweenSecond(Calendar cal1,Calendar cal2,RoundingMode roundingMode){
+        return betweenModeHandle(cal1,cal2,1000,roundingMode);
     }
 
     /**
@@ -161,13 +154,13 @@ public final class CalendarUtil {
      * @param cal1
      * @param cal2
      * @param unit
-     * @param betweenMode
+     * @param roundingMode
      * @return
      */
-    private static long betweenModeHandle(Calendar cal1,Calendar cal2,long unit,int betweenMode){
+    private static long betweenModeHandle(Calendar cal1,Calendar cal2,long unit,RoundingMode roundingMode){
         long betweenMillisecond = getBetweenMillisecond(cal1,cal2);
         long betweenValue = betweenMillisecond/unit;
-        if(betweenMode == CEIL){
+        if(roundingMode == RoundingMode.CEILING){
             if(betweenMillisecond%unit>0){
                 betweenValue++;
             }
