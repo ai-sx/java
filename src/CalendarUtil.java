@@ -1,3 +1,8 @@
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Objects;
+
 /**
  * Calendar工具类
  * 舍入模式，默认CEIL格式，eg: 2.5秒在FLOOR模式下为2秒，在CEIL为3秒
@@ -18,8 +23,8 @@ public final class CalendarUtil {
      * @param cal2
      * @return
      */
-    public static int getBetweenYear(Calendar cal1,Calendar cal2){
-        return getBetweenYear(cal1,cal2,RoundingMode.CEILING);
+    public static int getBetweenYear(Calendar cal1, Calendar cal2){
+        return getBetweenYear(cal1,cal2, RoundingMode.CEILING);
     }
 
     public static int getBetweenYear(Calendar cal1, Calendar cal2, RoundingMode roundingMode){

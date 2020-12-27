@@ -1,3 +1,6 @@
+import jdk.nashorn.internal.objects.annotations.Getter;
+import jdk.nashorn.internal.objects.annotations.Setter;
+
 /**
  * 日期递增类（默认步长为1秒）
  * @author WangFengLong
